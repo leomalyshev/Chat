@@ -14,6 +14,11 @@ namespace ChatNetwork
             _udpClient = new UdpClient(port);
         }
 
+        public IPEndPoint CreateNewIPEndPoint()
+        {
+            return new IPEndPoint(IPAddress.Any, 0);
+        }
+
         public ChatMessage Receive(ref IPEndPoint ipEndPoint)
         {
             byte[] data = _udpClient.Receive(ref ipEndPoint);
