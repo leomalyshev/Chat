@@ -8,15 +8,31 @@ namespace ChatNetwork
     public class MessageSource : IMessageSource
     {
         private UdpClient _udpClient;
+        private IPEndPoint _udpServerEndPoint;
 
-        public MessageSource(int port)
+        public MessageSource(int port, string adress, int portServer = 12345)
         {
             _udpClient = new UdpClient(port);
+            _udpServerEndPoint = new IPEndPoint(IPAddress.Parse(adress), portServer);
+        }
+
+        /// <summary>
+        /// Конструктор для сервера
+        /// </summary>
+        /// <param name="portServer"></param>
+        public MessageSource(int portServer = 12345)
+        {
+            _udpClient = new UdpClient(portServer);
         }
 
         public IPEndPoint CreateNewIPEndPoint()
         {
             return new IPEndPoint(IPAddress.Any, 0);
+        }
+
+        public IPEndPoint GetServerIPEndPoint()
+        {
+            return new IPEndPoint(_udpServerEndPoint.Address, _udpServerEndPoint.Port);
         }
 
         public ChatMessage Receive(ref IPEndPoint ipEndPoint)

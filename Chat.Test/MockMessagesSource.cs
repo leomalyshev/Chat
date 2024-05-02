@@ -56,5 +56,10 @@ namespace Chat.Test
         {
             //throw new NotImplementedException();
         }
+
+        public IPEndPoint GetServerIPEndPoint()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

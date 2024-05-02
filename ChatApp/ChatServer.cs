@@ -18,18 +18,18 @@ namespace ChatApp
             _messageSource = iMessageSource;
         }
 
-        public async Task ProcessMessageAsync(ChatMessage chatMessage, IPEndPoint ipEndPoint)
+        public void ProcessMessage(ChatMessage chatMessage, IPEndPoint ipEndPoint)
         {
             switch (chatMessage.Command)
             {
                 case Command.Message:
-                    await ReplyMessageAsync(chatMessage);
+                    ReplyMessageAsync(chatMessage);
                     break;
                 case Command.Confirmation:
-                    await ConfirmationAsync(chatMessage.Id);
+                    ConfirmationAsync(chatMessage.Id);
                     break;
                 case Command.Register:
-                    await RegisterAsync(chatMessage, ipEndPoint);
+                    Register(chatMessage, ipEndPoint);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -77,7 +77,7 @@ namespace ChatApp
         }
 
 
-        public async Task RegisterAsync(ChatMessage chatMessage, IPEndPoint ipEndPoint)
+        public void Register(ChatMessage chatMessage, IPEndPoint ipEndPoint)
         {
             Console.WriteLine($"{chatMessage.FromName}, message register name");
             clients.Add(chatMessage.FromName, ipEndPoint);
@@ -91,11 +91,11 @@ namespace ChatApp
                     return;
                 }
 
-                await context.Users.AddAsync(new User()
+                context.Users.Add(new User()
                 {
                     Name = chatMessage.FromName
                 });
-                await context.SaveChangesAsync();
+                context.SaveChanges();
             }
         }
 
@@ -104,7 +104,7 @@ namespace ChatApp
             _isWork = false;
         }
 
-        public async Task WorkAsync()
+        public void Work()
         {
             Console.WriteLine("Wait message from client");
             while (_isWork)
@@ -115,7 +115,7 @@ namespace ChatApp
                     var chatMessage = _messageSource.Receive(ref remoteIpEndPoint);
                     if (chatMessage != null)
                     {
-                        await ProcessMessageAsync(chatMessage, remoteIpEndPoint);
+                        ProcessMessage(chatMessage, remoteIpEndPoint);
                     }
                 }
                 catch (Exception ex)
