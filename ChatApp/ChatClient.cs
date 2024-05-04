@@ -15,7 +15,7 @@ namespace ChatApp
         private readonly string _name;
         private readonly IMessageSource _messageSource;
         private readonly IPEndPoint _serverEndPoint;
-
+        private bool _isWork = true;
         public ChatClient(string name, IMessageSource messageSource)
         {
             _name = name;
@@ -32,6 +32,11 @@ namespace ChatApp
         {
             var registerChat = new ChatMessage() { Command = Command.Register, FromName = _name};
             _messageSource.SendMessage(registerChat, _serverEndPoint);
+        }
+
+        public void Stop()
+        {
+            _isWork = false;
         }
 
         public void ProcessSendMessage()
@@ -58,7 +63,7 @@ namespace ChatApp
             Register();
             
 
-            while (true)
+            while (_isWork)
             {
                 var data = _messageSource.Receive(ref ip);
                 Console.WriteLine($"Сообщение получено от {data.FromName}: \n{data.Text}");

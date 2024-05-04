@@ -79,8 +79,9 @@ namespace ChatApp
 
         public void Register(ChatMessage chatMessage, IPEndPoint ipEndPoint)
         {
-            Console.WriteLine($"{chatMessage.FromName}, message register name");
-            clients.Add(chatMessage.FromName, ipEndPoint);
+            Console.WriteLine($"{chatMessage.FromName} -  register name");
+
+            clients.TryAdd(chatMessage.FromName, ipEndPoint);
 
             using (var context = new ChatContext())
             {

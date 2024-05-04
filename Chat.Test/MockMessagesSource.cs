@@ -1,12 +1,8 @@
 ﻿using ChatApp;
 using ChatNetwork;
 using CommonChat.DTO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net.Sockets;
 
 namespace Chat.Test
 {
@@ -16,8 +12,10 @@ namespace Chat.Test
 
         private ChatServer _chatServer;
         private IPEndPoint _ipEndPoint = new IPEndPoint(IPAddress.Any, 0);
-        public ChatServer ChatServer 
-        { 
+        private IPEndPoint _udpServerEndPoint;
+
+        public ChatServer ChatServer
+        {
             get => _chatServer;
             set => _chatServer = value;
         }
@@ -29,37 +27,39 @@ namespace Chat.Test
 
         public MockMessagesSource()
         {
-            _messages.Enqueue(new ChatMessage(){ Command = Command.Register, FromName = "Alex"});
+            _messages.Enqueue(new ChatMessage() { Command = Command.Register, FromName = "Alex" });
             _messages.Enqueue(new ChatMessage() { Command = Command.Register, FromName = "Ivan" });
-            _messages.Enqueue(new ChatMessage() { Command = Command.Message, FromName = "Alex", ToName = "Ivan", Text = "Hello, Ivan"});
-            _messages.Enqueue(new ChatMessage() { Command = Command.Message, FromName = "Ivan", ToName = "Alex", Text = "Hello, Alex" });
+            _messages.Enqueue(new ChatMessage()
+                { Command = Command.Message, FromName = "Alex", ToName = "Ivan", Text = "Hello, Ivan" });
+            _messages.Enqueue(new ChatMessage()
+                { Command = Command.Message, FromName = "Ivan", ToName = "Alex", Text = "Hello, Alex" });
         }
 
         public IPEndPoint CreateNewIPEndPoint()
         {
-            //throw new NotImplementedException();
-            return null;
+            return new IPEndPoint(IPAddress.Any, 0);
         }
 
         public ChatMessage Receive(ref IPEndPoint ipEndPoint)
         {
             _ipEndPoint = ipEndPoint;
+
             if (_messages.Count == 0)
             {
                 ChatServer.Stop();
                 return null;
             }
+
             return _messages.Dequeue();
         }
 
         public void SendMessage(ChatMessage chatMessage, IPEndPoint ipEndPoint)
         {
-            //throw new NotImplementedException();
         }
 
         public IPEndPoint GetServerIPEndPoint()
         {
-            throw new NotImplementedException();
+            return new IPEndPoint(_udpServerEndPoint.Address, _udpServerEndPoint.Port);
         }
     }
 }
